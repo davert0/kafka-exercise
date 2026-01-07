@@ -1,0 +1,70 @@
+version: "3.9"
+
+services:
+  event_gateway:
+    build:
+      context: ..
+      dockerfile: services/event_gateway/Dockerfile
+    ports:
+      - "${EVENT_GATEWAY_PORT}:8001"
+    environment:
+      SERVICE_NAME: event_gateway
+      PORT: "8001"
+      LOG_LEVEL: ${LOG_LEVEL}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  order_projector:
+    build:
+      context: ..
+      dockerfile: services/order_projector/Dockerfile
+    ports:
+      - "${ORDER_PROJECTOR_PORT}:8002"
+    environment:
+      SERVICE_NAME: order_projector
+      PORT: "8002"
+      LOG_LEVEL: ${LOG_LEVEL}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  notification_service:
+    build:
+      context: ..
+      dockerfile: services/notification_service/Dockerfile
+    ports:
+      - "${NOTIFICATION_SERVICE_PORT}:8003"
+    environment:
+      SERVICE_NAME: notification_service
+      PORT: "8003"
+      LOG_LEVEL: ${LOG_LEVEL}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8003/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  tg_bot:
+    build:
+      context: ..
+      dockerfile: services/tg_bot/Dockerfile
+    ports:
+      - "${TG_BOT_PORT}:8004"
+    environment:
+      SERVICE_NAME: tg_bot
+      PORT: "8004"
+      LOG_LEVEL: ${LOG_LEVEL}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8004/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
